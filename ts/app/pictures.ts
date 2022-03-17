@@ -6,28 +6,32 @@ goToNewGalleryPage();
 linksList?.addEventListener("click", createNewAddressOfCurrentPage);
 
 
-function goToNewGalleryPage() { 
+async function goToNewGalleryPage() { 
     let requestGalleryURL = basicGalleryURL + window.location.search;
     
-    fetch( requestGalleryURL,
-        {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': tokenObject.token
+    try {
+        const response = await fetch( requestGalleryURL,
+            {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': tokenObject.token
+                }
             }
-        })
-    .then((response) => checkResponse(response))
-    .then((response): Promise<Gallery> => response.json())
-    .then((imagesObject) => createLinks(imagesObject))
-    .then((imagesObject) => createImages(imagesObject))
-    .catch((error: Error) => {
+        );
+        
+        checkResponse(response);
+        let responseObj = await response.json();
+        createLinks(responseObj);
+        createImages(responseObj);
+    } catch(error) {
         console.log(error);
         alert(error);
-    })
+    }
 }
 
 function createLinks(imagesObject: Gallery){
+    console.log (imagesObject);
     let totalPages = imagesObject.total;
     let linksSection = document.getElementById("links");
 

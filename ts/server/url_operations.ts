@@ -10,8 +10,6 @@ function getCurrentUrl (req: http.IncomingMessage) {
         currentUrl = currentUrl + '.html';
     } 
 
-    
-    
     return currentUrl;
 }
 
@@ -19,12 +17,17 @@ function getFilePath (url: string, req: http.IncomingMessage) {
 
     let newUrl = new URL(url);
     let htmlFileName = (newUrl.pathname).slice(1);
-    console.log('path name: ' + htmlFileName)
-    if ((!(htmlFileName.includes('.'))) || htmlFileName.includes('.ico')) {
+
+    if (newUrl.pathname === '/') {
+        let filePath = path.join(__dirname, '/../../index.html');
+        return filePath;
+    }
+
+    if (  ( !(htmlFileName.includes('.')) ) || htmlFileName.includes('.ico')) {
         console.log ('WONT read: ' + htmlFileName);
         return false;
-    }
-    
+    } 
+
     let filePath = path.join(__dirname, req.url === '/' ? '/../../index.html' : ('/../../' + htmlFileName) );
 
     console.log('will read: ' + filePath);

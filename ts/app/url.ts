@@ -7,11 +7,11 @@ interface Token {
     token: string;
 }
 
-interface Error{
+interface Error {
     errorMessage: string;
 }
 
-interface Gallery{
+interface Gallery {
     objects: string[];
     page: number;
     total: number;

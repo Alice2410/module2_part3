@@ -9,52 +9,34 @@ function startAuthorization(e: Event) {
     loginWithToken();
 }
 
-function loginWithToken() { 
+async function loginWithToken() { 
     let user = {
         email: userEmail.value,
         password: userPassword.value
     };
+    
+    try {
+        const response = await fetch( loginURL,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(user),
+        });
+        
+        checkTokenResponse(response);
+        const jsonObj: Token = await response.json();
+        const tokenJson = tokenIs(jsonObj);
+        if (tokenJson) {
+            saveToken(tokenJson);
+            saveTokenReceiptTime();
+        }
+        redirect();
+    } catch (error) {
+        console.log(error) 
+    } 
 
-    fetch( loginURL,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(user),
-        })
-        .then ((response) => {
-             if (response.ok){
-                return response;
-             } else {
-                let TokenErrorElement = document.getElementById('token-error');
-                if (TokenErrorElement) {
-                    TokenErrorElement.innerHTML = 'Ошибка получения токена. Введите верные логин и пароль.';
-                }
-             }
-
-            throw new Error(`${response.status} — ${response.statusText}`);
-        })
-        .then((response): Promise<Token> => response.json())
-        .then((json) => {
-            if (json.token){ 
-                return json;
-            } else {
-                let TokenErrorElement = document.getElementById('token-error');
-                if (TokenErrorElement) {
-                    TokenErrorElement.innerHTML = 'Ошибка получения токена';
-                    return json;
-                }
-            }
-        })
-        .then((json) => {
-            if (json) {
-                saveToken(json);
-                saveTokenReceiptTime();
-            }
-        })
-        .then(() => redirect())
-        .catch((error: Error) => console.log(error));
 }
 
 function redirect() {
@@ -79,3 +61,29 @@ function saveTokenReceiptTime() {
     localStorage.setItem (tokenTimestampKey, JSON.stringify(tokenReceiptTime));
 }
 
+function checkTokenResponse(response: Response) {
+    if (response.ok){
+        return response;
+    } else {
+        let TokenErrorElement = document.getElementById('token-error');
+        if (TokenErrorElement) {
+            TokenErrorElement.innerHTML = 'Ошибка получения токена. Введите верные логин и пароль.';
+        }
+    }
+
+    throw new Error(`${response.status} — ${response.statusText}`);
+}
+
+function tokenIs (json: Token) {
+
+    if (json.token){ 
+        return json;
+    } else {
+        let TokenErrorElement = document.getElementById('token-error');
+        if (TokenErrorElement) {
+            TokenErrorElement.innerHTML = 'Ошибка получения токена';
+
+            return json;
+        }
+    }
+}

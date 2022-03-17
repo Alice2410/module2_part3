@@ -5,6 +5,12 @@ import { checkValidUserData } from './check_valid';
 import * as pageOperations from './page_operations';
 import * as urlOperations from './url_operations';
 
+interface responseObj {
+    objects: string[];
+    page: number;
+    total: number;
+}
+
 const token = { token: "token" };
 const PORT = 5000;
 
@@ -71,30 +77,13 @@ const server = http.createServer((req, res) => { //Create a server
                     page: 0,
                     total: 0,
                 }
-                    
-                pageOperations.getImagesArr(resObj)
-                .then((resObj) => pageOperations.getCurrentPage(resObj, reqUrl))
-                .then((resObj) => {
-                    if (pageOperations.checkPage(resObj)) {
-                        return resObj;
-                    } 
 
-                    res.writeHead(404, { 'Content-Type': contentType });
-                    res.end();
-                        
-                    throw new Error ('Такой страницы не существует')
-                    
-                })
-                .then((resObj) => pageOperations.getRequestedImages(resObj))
-                .then((resObj) => {
-                    let contentType = 'application/json';
-                    console.log(contentType);
-                    res.writeHead(200, { 'Content-Type': contentType });
-                    res.end(JSON.stringify(resObj));
-                })
-                .catch((error: Error) => {
+                try {
+                    sendResponse(resObj, reqUrl, res);
+                } catch (error) {
                     console.log(error);
-                })
+                }
+                
             } else {
                 if (headers.authorization) {
                     res.writeHead(403, { 'Content-Type': 'text/html' });
@@ -110,3 +99,27 @@ const server = http.createServer((req, res) => { //Create a server
 });
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+function makeFalsePageError (resObj: responseObj, res: http.ServerResponse) {
+
+    if (!pageOperations.checkPage(resObj)) {
+        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.end();
+        
+        throw new Error ('Такой страницы не существует')
+    } 
+
+    return resObj;
+}
+
+async function sendResponse (resObj: responseObj, reqUrl: string, res: http.ServerResponse) {
+
+    await pageOperations.getImagesArr(resObj);
+    pageOperations.getCurrentPage(resObj, reqUrl);
+    makeFalsePageError(resObj, res);
+    await pageOperations.getRequestedImages(resObj);
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(resObj));
+
+}
