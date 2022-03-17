@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@types/node": "^17.0.21"
+  },
+
+  "scripts": {
+    "start": "tsc && node build/server/server.js"
+  }
+}
