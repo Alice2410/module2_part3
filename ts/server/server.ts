@@ -12,30 +12,31 @@ const server = http.createServer((req, res) => { //Create a server
     const currentUrl = urlOperations.getCurrentUrl(req);
     const filePath = urlOperations.getFilePath(currentUrl, req);
     let contentType = 'text/html';
-    
-    fs.readFile(filePath, (err, content) => {
-        contentType = pageOperations.getContentType(filePath);
+    if (filePath) {
+        fs.readFile(filePath, (err, content) => {
+            contentType = pageOperations.getContentType(filePath);
 
-        if(err) {
-            if(err.code == 'ENOENT') { //Page not found
-                fs.readFile(path.join(__dirname, '/../../404.html'), (err, content) => {
-                    if (err) {
-                        console.log('Ошибка чтения файла');
-                    } else {
-                        res.writeHead(200, { 'Content-Type': 'text/html' });
-                        res.end(content, 'utf8');
-                    }
-                })
-            } else { //Some server error
-                res.writeHead(500);
-                res.end(`Server error ${err.code}`);
+            if(err) {
+                if(err.code == 'ENOENT') { //Page not found
+                    fs.readFile(path.join(__dirname, '/../../404.html'), (err, content) => {
+                        if (err) {
+                            console.log('Ошибка чтения файла');
+                        } else {
+                            res.writeHead(200, { 'Content-Type': 'text/html' });
+                            res.end(content, 'utf8');
+                        }
+                    })
+                } else { //Some server error
+                    res.writeHead(500);
+                    res.end(`Server error ${err.code}`);
+                }
+            } else {
+                //Success
+                res.writeHead(200, { 'Content-Type': contentType });
+                res.end(content, 'utf8');
             }
-        } else {
-            //Success
-            res.writeHead(200, { 'Content-Type': contentType });
-            res.end(content, 'utf8');
-        }
-    });
+        });
+    }
 
     if (req.method === 'POST') {
         let body = {
@@ -60,6 +61,7 @@ const server = http.createServer((req, res) => { //Create a server
 
     if (req.method === 'GET') {
         if((req.url)?.includes('gallery?')) {
+            
             const headers = req.headers;
 
             if (headers.authorization === 'token') {                   
@@ -85,6 +87,8 @@ const server = http.createServer((req, res) => { //Create a server
                 })
                 .then((resObj) => pageOperations.getRequestedImages(resObj))
                 .then((resObj) => {
+                    let contentType = 'application/json';
+                    console.log(contentType);
                     res.writeHead(200, { 'Content-Type': contentType });
                     res.end(JSON.stringify(resObj));
                 })
