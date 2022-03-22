@@ -31,7 +31,6 @@ async function goToNewGalleryPage() {
 }
 
 function createLinks(imagesObject: Gallery){
-    console.log (imagesObject);
     let totalPages = imagesObject.total;
     let linksSection = document.getElementById("links");
 
@@ -56,7 +55,7 @@ function createImages(imagesObject: Gallery) {
 }
 
 function checkTokenIs() {
-    if ((Date.now() - JSON.parse(localStorage.getItem(tokenTimestampKey) || "")) >= 10000000) {
+    if ((Date.now() - JSON.parse(localStorage.getItem(tokenTimestampKey) || "")) >= 600000) {
         localStorage.removeItem(localStorageTokenKey);
         localStorage.removeItem(tokenTimestampKey);
         linksList?.removeEventListener("click", createNewAddressOfCurrentPage);
@@ -79,7 +78,7 @@ function checkResponse (response: Response) {
 
     if (response.status === 403) {
         errorMessage = "Токен некорректен или отсутствует. Повторите авторизацию."
-        writeErrorMessage (errorMessage,response);
+        writeErrorMessage (errorMessage, response);
     } else if (response.status === 404) {
         errorMessage = "Такой страницы не существует."
         writeErrorMessage (errorMessage, response);
