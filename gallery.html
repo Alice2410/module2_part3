@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="build/app/url.js"></script>
-    <script defer src="build/app/pictures.js"></script>
+    <link rel="stylesheet" href="../styles.css">
+    <script defer src="../../build/app/url.js"></script>
+    <script defer src="../../build/app/pictures.js"></script>
 </head>
 <body>
     <header>
@@ -23,6 +23,12 @@
         </section>
         <p id="error-message"></p>
         <a href="http://localhost:5000/index" id="back-gallery" class="back-link back-link--disabled">Go to authorization page</a>
+        <section class="upload-section">
+            <form action="/gallery" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input type="submit" name="upload" value="upload">
+            </form>
+        </section>
     </main>
     <footer>
     </footer>

@@ -64,6 +64,7 @@ body {
 .links-list {
     display: flex;
     list-style: none;
+    max-height: 30px;
 }
 
 .photos {
@@ -102,6 +103,7 @@ a {
     color: #6e544b;
     display: block;
     max-width: 170px;
+    margin-bottom: 100px;
 }
 
 .token-error {
