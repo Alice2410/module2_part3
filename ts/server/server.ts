@@ -23,7 +23,7 @@ app.use('/', express.static(path.join(__dirname, '..', '..')));
 app.use(upload())
 
 app.post('/gallery', (req, res) => {
-    console.log('in post')
+    
     if (req.files) {
         let file = req.files.file as UploadedFile;
 
@@ -69,6 +69,7 @@ app.post('/index', (req, res) => {
         email: '',
         password: ''
     };
+
     req.on('data', (chunk: string) => {
         body = JSON.parse(chunk);
      });
@@ -141,36 +142,37 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
 
 }
 
-function handleError (res: http.ServerResponse, err: NodeJS.ErrnoException) {
-    if(err) {
+// function handleError (res: http.ServerResponse, err: NodeJS.ErrnoException) {
+//     if(err) {
 
-        if(err.code == 'ENOENT') { //Page not found
-            fs.readFile(path.join(__dirname, '/../../404.html'), (err, content) => {
-                if (err) {
-                    console.log('Ошибка чтения файла');
-                } else {
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.end(content, 'utf8');
-                }
-            })
+//         if(err.code == 'ENOENT') { //Page not found
+//             fs.readFile(path.join(__dirname, '/../../404.html'), (err, content) => {
+//                 if (err) {
+//                     console.log('Ошибка чтения файла');
+//                 } else {
+//                     res.writeHead(200, { 'Content-Type': 'text/html' });
+//                     res.end(content, 'utf8');
+//                 }
+//             })
 
-        } else { //Some server error
-            res.writeHead(500);
-            res.end(`Server error ${err.code}`);
-        }
-    }
-}
+//         } else { //Some server error
+//             res.writeHead(500);
+//             res.end(`Server error ${err.code}`);
+//         }
+//     }
+// }
 
 async function getUploadedFileName(file: UploadedFile, res: Response) {
     let fileName = file.name;
     let noSpaceFileName = fileName.replace(/\s/g, '');
-    let number = await pageOperations.getArrayLength() 
-    number++;
+    let number = await pageOperations.getArrayLength() + 1;
+
     let newFileName = 'user-' + number + '_' +  noSpaceFileName;
 
     file.mv('/Users/admin/Desktop/module2_part3/public/resources/images/' + newFileName, (err) => {
         if(err){
             res.send (err);
+            res.end()
         }  
     })
 }
@@ -178,5 +180,4 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
 function errorHandler (req: Request, res: Response) {
     res.redirect('http://localhost:5000/404.html')
     res.end()
-
 }
