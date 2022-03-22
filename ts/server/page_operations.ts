@@ -4,8 +4,9 @@ import * as pathMod from "path";
 
 const picOnPage = 4;
 // const path = './../../public/resources/images';
-const path = '/Users/admin/Desktop/module2_part3/resources/images'
-const userPath = '/Users/admin/Desktop/module2_part3/resources/user-images'
+// const path = '/Users/admin/Desktop/module2_part3/resources/images'
+// const path = pathMod.join(__dirname, '../../resources/images')
+const path = '/Users/admin/Desktop/module2_part3/public/resources/images'
 
 interface responseObj {
     objects: string[];

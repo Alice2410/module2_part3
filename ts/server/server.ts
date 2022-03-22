@@ -1,7 +1,7 @@
 import * as http from "http";
 import * as path from "path";
 import * as fs from "fs";
-import express, {Request, Response} from "express";
+import express, {NextFunction, Request, Response} from "express";
 import upload, { UploadedFile } from "express-fileupload";
 import { checkValidUserData } from './check_valid';
 import * as pageOperations from './page_operations';
@@ -17,6 +17,22 @@ const token = { token: "token" };
 const PORT = 5000;
 const app = express();
 let contentType = 'text/html';
+
+app.use('/', express.static(path.join(__dirname, '..', '..')));
+
+app.use(upload())
+
+app.post('/gallery', (req, res) => {
+    console.log('in post')
+    if (req.files) {
+        let file = req.files.file as UploadedFile;
+
+        getUploadedFileName(file, res)
+        res.redirect('http://localhost:5000/gallery.html?page=1')
+        res.end()
+    }
+
+})
 
 app.get('/gallery', (req, res) => {
    
@@ -48,16 +64,6 @@ app.get('/gallery', (req, res) => {
     
 })
 
-app.use(upload())
-
-app.post('/gallery', (req, res) => {
-    if (req.files) {
-        console.log(req.files)
-        let file = req.files.file as UploadedFile;
-        getUploadedFileName(file, res)
-    }
-})
-
 app.post('/index', (req, res) => {
     let body = {
         email: '',
@@ -78,24 +84,30 @@ app.post('/index', (req, res) => {
     });
 })
 
-app.get('/*', (req, res) => {
+app.use(errorHandler)
 
-    const currentUrl = urlOperations.getCurrentUrl(req);
-    const filePath = urlOperations.getFilePath(currentUrl, req);
-    
-    if (filePath) {
-        res.sendFile(filePath, function (err) {
 
-            if (err) {
-                handleError(res, err);
-                console.log('err with: ' + filePath)
-            }
-            else {
-                console.log('Sent:', filePath);
-            }
-        });
-    }
-}) 
+// ______________________________________________________________
+
+// app.get('/', (req, res) => {
+//     const currentUrl = urlOperations.getCurrentUrl(req);
+//     const filePath = urlOperations.getFilePath(currentUrl, req);
+
+//     if (filePath) {
+//         res.sendFile(filePath, function (err) {
+
+//             if (err) {
+//                 handleError(res, err);
+//                 console.log('err with: ' + filePath)
+//             }
+//             else {
+//                 console.log('Sent:', filePath);
+//             }
+//         });
+//     }
+// })
+
+// __________________________________________________________
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
@@ -156,10 +168,15 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
     number++;
     let newFileName = 'user-' + number + '_' +  noSpaceFileName;
 
-    file.mv('/Users/admin/Desktop/module2_part3/resources/images/' + newFileName, (err) => {
+    file.mv('/Users/admin/Desktop/module2_part3/public/resources/images/' + newFileName, (err) => {
         if(err){
             res.send (err);
-        } 
-        res.end()
+        }  
     })
+}
+
+function errorHandler (req: Request, res: Response) {
+    res.redirect('http://localhost:5000/404.html')
+    res.end()
+
 }
