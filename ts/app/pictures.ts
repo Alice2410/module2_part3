@@ -1,15 +1,25 @@
 const linksList = document.getElementById('links');
+const uploadImageForm = document.getElementById('upload') as HTMLFormElement;
+const uploadFile = document.getElementById("file") as HTMLInputElement;
+let formData = new FormData();
+
 let tokenObject: Token;
 setInterval(checkTokenIs, 5000);
 checkLocalStorage();
 goToNewGalleryPage();
 linksList?.addEventListener("click", createNewAddressOfCurrentPage);
+uploadImageForm?.addEventListener("submit", startUpload);
 
+function startUpload(e: Event) {
+    e.preventDefault();
+    uploadImage();
+}
 
 async function goToNewGalleryPage() { 
     let requestGalleryURL = basicGalleryURL + window.location.search;
     
     try {
+        
         const response = await fetch( requestGalleryURL,
             {
                 method: "GET",
@@ -28,7 +38,46 @@ async function goToNewGalleryPage() {
         console.log(error);
         alert(error);
     }
+
 }
+
+async function uploadImage() {
+    //-------------POST FOR PICS
+    let postUrl = '/gallery';
+    if (uploadFile.files) {
+        for (const file of uploadFile.files) {
+            formData.append("file", file);
+        }
+    }
+    
+
+    try {
+        const response = await fetch( postUrl,
+            {
+                method: "POST",
+                headers: {
+                    'Authorization': tokenObject.token
+                },
+                body: formData
+            }
+        );
+        let currentPage = window.location;
+        let searchParam = currentPage.search;
+        window.location.href = "gallery.html" + searchParam;
+       
+        
+        
+        // checkResponse(response);
+        // let responseObj = await response.json();
+        // createLinks(responseObj);
+        // createImages(responseObj);
+    } catch(error) {
+        console.log(error);
+        alert(error);
+    }
+}
+
+
 
 function createLinks(imagesObject: Gallery){
     let totalPages = imagesObject.total;

@@ -25,8 +25,9 @@
         <p id="error-message"></p>
         <a href="http://localhost:5000/" id="back-gallery" class="back-link back-link--disabled">Go to authorization page</a>
         <section class="upload-section">
-            <form action="/gallery" method="POST" enctype="multipart/form-data">
-                <input type="file" name="file">
+            <!-- <form action="/gallery" method="POST" enctype="multipart/form-data"></form>> -->
+            <form id="upload">
+                <input type="file" name="file" id="file" multiple>
                 <input type="submit" name="upload" value="upload">
             </form>
         </section>

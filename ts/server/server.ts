@@ -6,6 +6,7 @@ import upload, { UploadedFile } from "express-fileupload";
 import { checkValidUserData } from './check_valid';
 import * as pageOperations from './page_operations';
 import * as urlOperations from './url_operations';
+import { nextTick } from "process";
 
 interface responseObj {
     objects: string[];
@@ -20,22 +21,82 @@ let contentType = 'text/html';
 
 app.use('/', express.static(path.join(__dirname, '..', '..')));
 
-app.use(upload())
+app.post('/index', (req, res) => {
+    let body = {
+        email: '',
+        password: ''
+    };
 
-app.post('/gallery', (req, res) => {
-    
-    if (req.files) {
-        let file = req.files.file as UploadedFile;
+    req.on('data', (chunk: string) => {
+        body = JSON.parse(chunk);
+     });
 
-        getUploadedFileName(file, res)
-        res.redirect('http://localhost:5000/gallery.html?page=1')
-        res.end()
-    }
-
+    req.on('end', () => {
+        if (checkValidUserData(body)) { //проверка данных пользователя
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(JSON.stringify(token));
+        } else {
+            res.writeHead(403, { 'Content-Type': contentType });
+            res.end();
+        }
+    });
 })
 
+app.use(upload())
+app.use(checkToken)
+
+app.post('/gallery', async (req, res) => {
+    console.log('I am in POST /gallery')
+    
+    try{
+        if(!req.files) {
+            res.send({
+                status: false,
+                message: 'No files uploaded'
+            });
+        } else {
+            if (req.files) {
+                console.log('true')
+            }
+            console.log(req.files.file);
+            let file = req.files.file as UploadedFile;
+
+            getUploadedFileName(file, res)
+            // res.send(true)
+            res.end()
+            // res.send({
+            //     status: true,
+            //     massage: 'File is uploaded',
+            //     data: {
+            //         name: file.name,
+            //         mimetype: file.mimetype,
+            //         size: file.size
+            //     }
+            // })
+            
+            
+            
+        }
+    } catch(err) {
+        res.status(500).send(err);
+    }
+    
+    // if (req.files) {
+        
+    //     let file = req.files.file as UploadedFile;
+
+    //     getUploadedFileName(file, res)
+    //     res.redirect('http://localhost:5000/gallery.html?page=1')
+    //     res.end()
+    // } else {
+    //     console.log('some error uppears')
+    //     res.send({error: 'some error'})
+    // }
+
+});
+
 app.get('/gallery', (req, res) => {
-   
+    
     const headers = req.headers;
 
     if (headers.authorization === 'token') {              
@@ -64,26 +125,7 @@ app.get('/gallery', (req, res) => {
     
 })
 
-app.post('/index', (req, res) => {
-    let body = {
-        email: '',
-        password: ''
-    };
 
-    req.on('data', (chunk: string) => {
-        body = JSON.parse(chunk);
-     });
-
-    req.on('end', () => {
-        if (checkValidUserData(body)) { //проверка данных пользователя
-            res.writeHead(200, { 'Content-Type': contentType });
-            res.end(JSON.stringify(token));
-        } else {
-            res.writeHead(403, { 'Content-Type': contentType });
-            res.end();
-        }
-    });
-})
 
 app.use(errorHandler)
 
@@ -163,13 +205,16 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
 // }
 
 async function getUploadedFileName(file: UploadedFile, res: Response) {
+    console.log('in get uploaded filename')
     let fileName = file.name;
+    console.log(fileName)
     let noSpaceFileName = fileName.replace(/\s/g, '');
     let number = await pageOperations.getArrayLength() + 1;
 
     let newFileName = 'user-' + number + '_' +  noSpaceFileName;
 
-    file.mv('/Users/admin/Desktop/module2_part3/public/resources/images/' + newFileName, (err) => {
+    file.mv(('/Users/admin/Desktop/module2_part3/public/resources/images/' + newFileName), (err: Error) => {
+    
         if(err){
             res.send (err);
             res.end()
@@ -180,4 +225,18 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
 function errorHandler (req: Request, res: Response) {
     res.redirect('http://localhost:5000/404.html')
     res.end()
+}
+
+function checkToken (req: Request, res: Response, next: NextFunction) {
+    console.log('in server-checkToken')
+
+    const headers = req.headers;
+
+    if (headers.authorization === 'token' || req.path==='/') {  
+        console.log('checkToken: token is fine')
+        next()
+    } else {
+        console.log('checkToken: token is NOT fine')
+        res.redirect('http://localhost:5000/')
+    }
 }
