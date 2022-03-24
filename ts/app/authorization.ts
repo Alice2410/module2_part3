@@ -26,22 +26,24 @@ async function loginWithToken() {
         });
         
         checkTokenResponse(response);
+
         const jsonObj: Token = await response.json();
         const tokenJson = tokenIs(jsonObj);
-        if (tokenJson) {
-            saveToken(tokenJson);
-            saveTokenReceiptTime();
-        }
+
+        saveToken(tokenJson);
+        saveTokenReceiptTime();
         redirect();
-    } catch (error) {
-        console.log(error) 
+
+    } catch (err) {
+        let error = err as Error;
+        alert(error) 
     } 
 
 }
 
 function redirect() {
-    const currentPage = window.location;
-    const pageNumber = currentPage.search;
+    const currentPage = window.location; //currentPage: http://localhost:5000/ || http://localhost:5000/index.html?page=2
+    const pageNumber = currentPage.search; //?page=2
 
     authorizationForm?.removeEventListener("submit", startAuthorization);
 
@@ -66,24 +68,27 @@ function checkTokenResponse(response: Response) {
         return response;
     } else {
         let TokenErrorElement = document.getElementById('token-error');
+
         if (TokenErrorElement) {
             TokenErrorElement.innerHTML = 'Ошибка получения токена. Введите верные логин и пароль.';
+        } else {
+            throw new Error(`HTML-элемент не найден. ${response.status} — ${response.statusText}`)
         }
     }
 
-    throw new Error(`${response.status} — ${response.statusText}`);
+    throw new Error(`${response.status} — ${response.statusText}`); 
 }
 
 function tokenIs (json: Token) {
 
-    if (json.token){ 
-        return json;
-    } else {
+    if (!json.token){ 
         let TokenErrorElement = document.getElementById('token-error');
         if (TokenErrorElement) {
             TokenErrorElement.innerHTML = 'Ошибка получения токена';
 
-            return json;
+            throw new Error('Token is not exist')
         }
-    }
+    } 
+
+    return json;   
 }

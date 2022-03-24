@@ -35,11 +35,13 @@ app.post('/index', (req, res) => {
 
     req.on('end', () => {
         if (checkValidUserData(body)) { //проверка данных пользователя
-            res.writeHead(200, { 'Content-Type': contentType });
+            // res.writeHead(200, { 'Content-Type': contentType });
+            res.statusCode = 200;
             res.end(JSON.stringify(token));
         } else {
-            res.writeHead(403, { 'Content-Type': contentType });
-            res.end();
+            // res.writeHead(403, { 'Content-Type': contentType });
+            // res.end();
+            res.sendStatus(403);
         }
     });
 })
@@ -99,10 +101,7 @@ app.post('/gallery', async (req, res) => {
 });
 
 app.get('/gallery', (req, res) => {
-    
-    const headers = req.headers;
-
-    if (headers.authorization === 'token') {              
+               
         const reqUrl = req.url;
         const resObj = {
             objects: [''],
@@ -116,16 +115,6 @@ app.get('/gallery', (req, res) => {
             console.log(error);
         }
         
-    } else {
-        if (headers.authorization) {
-            res.writeHead(403, { 'Content-Type': 'text/html' });
-            res.end('Неверное значение токена. Повторите авторизацию.', 'utf-8');
-        } else {
-            res.writeHead(403, { 'Content-Type': 'text/html' });
-            res.end('Токен отсутствует. Повторите авторизацию.', 'utf-8');
-        }
-    }
-    
 })
 
 
@@ -240,7 +229,7 @@ function checkToken (req: Request, res: Response, next: NextFunction) {
         next()
     } else {
         console.log('checkToken: token is NOT fine')
-        res.redirect('http://localhost:5000/')
+        res.sendStatus(403);
     }
 }
 

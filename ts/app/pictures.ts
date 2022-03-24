@@ -2,8 +2,8 @@ const linksList = document.getElementById('links');
 const uploadImageForm = document.getElementById('upload') as HTMLFormElement;
 const uploadFile = document.getElementById("file") as HTMLInputElement;
 let formData = new FormData();
-
 let tokenObject: Token;
+
 setInterval(checkTokenIs, 5000);
 checkLocalStorage();
 goToNewGalleryPage();
@@ -140,7 +140,7 @@ function checkResponse (response: Response) {
 function checkLocalStorage () {
     if (localStorage.getItem(localStorageTokenKey)) {
         tokenObject = JSON.parse(localStorage.getItem(localStorageTokenKey) || '');
-     } else {
+    } else {
          redirectToAuthorization()
      }
 }
@@ -154,7 +154,7 @@ function writeErrorMessage (message: string, response: Response) {
     const errorMessage = document.getElementById('error-message');
         if (errorMessage) {
             errorMessage.innerHTML = message;
-
+            
             const toAuthorizationLink = document.getElementById('back-gallery');
             if (toAuthorizationLink) {
 

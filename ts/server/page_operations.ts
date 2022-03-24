@@ -25,21 +25,6 @@ async function getArrayLength () {
     return arrLength;
 }
 
-// async function makeOneArray() {
-//     const basicImagesArr = await fs.promises.readdir(path);
-//     const userImagesArr = await fs.promises.readdir(userPath);
-//     let imagesArr; 
-//     // console.log(userImagesArr);
-//     if (userImagesArr) {
-//         imagesArr = basicImagesArr.concat(userImagesArr);
-//         console.log(imagesArr);
-//         return imagesArr;
-//     } else {
-//         imagesArr = basicImagesArr
-//         return imagesArr;
-//     }
-// }
-
 async function getImagesArr(resObj: responseObj) { //получает массив строк с адресами всех картинок
     
     // let imagesArr = await makeOneArray(); 
