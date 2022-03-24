@@ -160,7 +160,7 @@ function handleFalsePageError (resObj: responseObj, res: http.ServerResponse) {
 
 async function sendResponse (resObj: responseObj, reqUrl: string, res: http.ServerResponse) {
     
-    await pageOperations.getImagesArr(resObj);
+    await pageOperations.getTotal(resObj);
     pageOperations.getCurrentPage(resObj, reqUrl);
 
     try {
@@ -172,6 +172,7 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
     await pageOperations.getRequestedImages(resObj);
     let contentType = pageOperations.getContentType(reqUrl);
     res.writeHead(200, { 'Content-Type': contentType });
+    // res.statusCode = 200;
     res.end(JSON.stringify(resObj));
 
 }

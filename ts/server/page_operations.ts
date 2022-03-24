@@ -18,27 +18,26 @@ interface Error{
     errorMessage: string;
 }
 
-async function getArrayLength () {
-    const basicImagesArr = await fs.promises.readdir(path);
-    const arrLength = basicImagesArr.length;
-    console.log (arrLength);
+async function getArrayLength () { //вычисляет количество картинок всего
+    const imagesArr = await getImagesArr();
+    const arrLength = imagesArr.length;
+    
     return arrLength;
 }
 
-async function getImagesArr(resObj: responseObj) { //получает массив строк с адресами всех картинок
+async function getImagesArr(/*resObj: responseObj*/) { //получает массив строк с адресами всех картинок
     
     // let imagesArr = await makeOneArray(); 
     let imagesArr = await fs.promises.readdir(path);
-    getTotal(resObj,imagesArr);
+    // getTotal(resObj,imagesArr);
     
-    return resObj;
+    // return resObj;
+    return imagesArr;
 }
 
 
-function getTotal(resObj: responseObj, imagesArr: string[]) { //вычисляет количество страниц
-    const picturesAmount = imagesArr.length;
-    console.log ('arr : ' + imagesArr)
-    console.log ('arr length: ' + imagesArr.length)
+async function getTotal(resObj: responseObj/*, imagesArr: string[]*/) { //вычисляет количество страниц 
+    const picturesAmount = await getArrayLength();                      // назначает TOTAL
     const pagesAmount = Math.ceil(picturesAmount / picOnPage);
 
     resObj.total = pagesAmount;
@@ -46,32 +45,30 @@ function getTotal(resObj: responseObj, imagesArr: string[]) { //вычисляе
     return resObj;
 }
 
-function getCurrentPage(obj: responseObj, req: string | undefined) {
-    console.log('GET CURRENT PAGE')
-    if (req) {
-        const requestedPage = url.parse(req, true).query.page;//получает номер страницы из URL запроса
-
-        if (requestedPage) {
-            obj.page = +requestedPage;
-        }
-    }
+function getCurrentPage(obj: responseObj, reqURL: string) { //назначает PAGE
+    
+    // if (req) {
+        const requestedPage = url.parse(reqURL, true).query.page as string;
+    
+        obj.page = +requestedPage;
+        
+    // }
     
     return obj;
 }
 
-async function getRequestedImages(resObj: responseObj) { //формирует массив адресов картинок для нужной страницы
-    const arr: string[] = [];
+async function getRequestedImages(resObj: responseObj) { //назначает OBJECTS
+    const arrForPage: string[] = [];
     const page = resObj.page;
-    // const picArr = await makeOneArray();
-    const picArr = await fs.promises.readdir(path);
+    const picArr = await getImagesArr();
 
     for (let i = picOnPage * (page - 1); i < picOnPage * page; i++) {
         if (picArr[i]) {
-            arr.push(picArr[i]);
+            arrForPage.push(picArr[i]);
         }
     }
 
-    resObj.objects = arr;
+    resObj.objects = arrForPage;
 
     return resObj;
 }
@@ -111,4 +108,4 @@ function getContentType(filePath: string) {
 
 }
 
-export {getImagesArr, getCurrentPage, getRequestedImages, checkPage, getContentType, getArrayLength};
+export {getTotal, getCurrentPage, getRequestedImages, checkPage, getContentType, getArrayLength};
