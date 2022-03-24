@@ -170,9 +170,7 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
     }
     
     await pageOperations.getRequestedImages(resObj);
-    let contentType = pageOperations.getContentType(reqUrl);
-    res.writeHead(200, { 'Content-Type': contentType });
-    // res.statusCode = 200;
+    res.statusCode = 200;
     res.end(JSON.stringify(resObj));
 
 }
