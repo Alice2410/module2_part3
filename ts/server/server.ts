@@ -21,7 +21,7 @@ let contentType = 'text/html';
 
 app.use(logger)
 
-app.use('/', express.static(path.join(__dirname, '..', '..')));
+app.use(express.static(path.join(__dirname, '..', '..')));
 
 app.post('/index', (req, res) => {
     let body = {
@@ -48,7 +48,7 @@ app.post('/index', (req, res) => {
 
 app.use(upload())
 
-app.use(checkToken)
+app.use('/gallery', checkToken)
 
 app.post('/gallery', async (req, res) => {
     console.log('I am in POST /gallery')
@@ -117,10 +117,9 @@ app.get('/gallery', (req, res) => {
         
 })
 
-
-
-app.use(errorHandler)
-
+app.use((req: Request, res: Response) => {
+    res.redirect('http://localhost:5000/404.html')
+})
 
 // ______________________________________________________________
 
@@ -175,26 +174,6 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
 
 }
 
-// function handleError (res: http.ServerResponse, err: NodeJS.ErrnoException) {
-//     if(err) {
-
-//         if(err.code == 'ENOENT') { //Page not found
-//             fs.readFile(path.join(__dirname, '/../../404.html'), (err, content) => {
-//                 if (err) {
-//                     console.log('Ошибка чтения файла');
-//                 } else {
-//                     res.writeHead(200, { 'Content-Type': 'text/html' });
-//                     res.end(content, 'utf8');
-//                 }
-//             })
-
-//         } else { //Some server error
-//             res.writeHead(500);
-//             res.end(`Server error ${err.code}`);
-//         }
-//     }
-// }
-
 async function getUploadedFileName(file: UploadedFile, res: Response) {
     console.log('in get uploaded filename')
     let fileName = file.name;
@@ -213,11 +192,6 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
     })
 }
 
-function errorHandler (req: Request, res: Response) {
-    res.redirect('http://localhost:5000/404.html')
-    res.end()
-}
-
 function checkToken (req: Request, res: Response, next: NextFunction) {
     console.log('in server-checkToken')
 
@@ -229,6 +203,7 @@ function checkToken (req: Request, res: Response, next: NextFunction) {
     } else {
         console.log('checkToken: token is NOT fine')
         res.sendStatus(403);
+        next()
     }
 }
 
