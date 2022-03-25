@@ -5,8 +5,8 @@ import express, {NextFunction, Request, Response} from "express";
 import upload, { UploadedFile } from "express-fileupload";
 import { checkValidUserData } from './check_valid';
 import * as pageOperations from './page_operations';
-import * as urlOperations from './url_operations';
-import { nextTick } from "process";
+// import * as urlOperations from './url_operations';
+// import { nextTick } from "process";
 
 interface responseObj {
     objects: string[];
@@ -21,7 +21,9 @@ let contentType = 'text/html';
 
 app.use(logger)
 
-app.use(express.static(path.join(__dirname, '..', '..')));
+console.log(path.join(__dirname, '..', '..'))
+console.log(path.join(__dirname, '..',  'app'))
+app.use('/', express.static(path.join(__dirname, '..',  'app')), express.static(path.join(__dirname, '..', '..')));
 
 app.post('/index', (req, res) => {
     let body = {
@@ -121,28 +123,6 @@ app.use((req: Request, res: Response) => {
     res.redirect('http://localhost:5000/404.html')
 })
 
-// ______________________________________________________________
-
-// app.get('/', (req, res) => {
-//     const currentUrl = urlOperations.getCurrentUrl(req);
-//     const filePath = urlOperations.getFilePath(currentUrl, req);
-
-//     if (filePath) {
-//         res.sendFile(filePath, function (err) {
-
-//             if (err) {
-//                 handleError(res, err);
-//                 console.log('err with: ' + filePath)
-//             }
-//             else {
-//                 console.log('Sent:', filePath);
-//             }
-//         });
-//     }
-// })
-
-// __________________________________________________________
-
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 function handleFalsePageError (resObj: responseObj, res: http.ServerResponse) {
@@ -161,6 +141,8 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
     
     await pageOperations.getTotal(resObj);
     pageOperations.getCurrentPage(resObj, reqUrl);
+
+    console.log('im in sendResponse ' + reqUrl)
 
     try {
         handleFalsePageError(resObj, res);
@@ -183,7 +165,7 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
 
     let newFileName = 'user-' + number + '_' +  noSpaceFileName;
 
-    file.mv(('/Users/admin/Desktop/module2_part3/public/resources/images/' + newFileName), (err: Error) => {
+    file.mv((path.join(__dirname,'../../resources/images/') + newFileName), (err: Error) => {
     
         if(err){
             res.send (err);

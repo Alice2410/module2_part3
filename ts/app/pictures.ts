@@ -63,17 +63,10 @@ async function uploadImage() {
         );
         let currentPage = window.location;
         let searchParam = currentPage.search;
+
         window.location.href = "gallery.html" + searchParam;
-       
-        
-        
-        // checkResponse(response);
-        // let responseObj = await response.json();
-        // createLinks(responseObj);
-        // createImages(responseObj);
     } catch(error) {
         console.log(error);
-        alert(error);
     }
 }
 

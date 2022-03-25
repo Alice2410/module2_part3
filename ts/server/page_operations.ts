@@ -3,7 +3,7 @@ import * as url from "url";
 import * as pathMod from "path";
 
 const picOnPage = 4;
-const path = '/Users/admin/Desktop/module2_part3/public/resources/images'
+const path = pathMod.join(__dirname,'../../resources/images')
 
 interface responseObj {
     objects: string[];
@@ -23,8 +23,9 @@ async function getArrayLength () { //вычисляет количество к�
 }
 
 async function getImagesArr() { //получает массив строк с адресами всех картинок
+    
     let imagesArr = await fs.promises.readdir(path);
-
+    console.log ('in getImagesArr : ' + imagesArr)
     return imagesArr;
 }
 
@@ -47,6 +48,7 @@ function getCurrentPage(obj: responseObj, reqURL: string) { //назначает
 }
 
 async function getRequestedImages(resObj: responseObj) { //назначает OBJECTS
+    console.log('im in getRequestedImages' + resObj.page )
     const arrForPage: string[] = [];
     const page = resObj.page;
     const picArr = await getImagesArr();
