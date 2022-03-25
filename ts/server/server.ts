@@ -5,8 +5,8 @@ import express, {NextFunction, Request, Response} from "express";
 import upload, { UploadedFile } from "express-fileupload";
 import { checkValidUserData } from './check_valid';
 import * as pageOperations from './page_operations';
-// import * as urlOperations from './url_operations';
-// import { nextTick } from "process";
+import morgan from 'morgan'
+import * as rfs from "rotating-file-stream";
 
 interface responseObj {
     objects: string[];
@@ -19,7 +19,29 @@ const PORT = 5000;
 const app = express();
 let contentType = 'text/html';
 
-app.use(logger)
+
+
+const pad = (num: number) => (num > 9 ? "" : "0") + num;
+const generator = () => {
+    let time = new Date()
+    if (!time) return "file.log";
+
+    var month = time.getFullYear() + "_" + pad(time.getMonth() + 1);
+    var day = pad(time.getDate());
+    var hour = pad(time.getHours());
+    var minute = pad(time.getMinutes());
+
+    return `${month + '_'}${day}-${hour + ':'}${minute}-file.log`;
+};
+
+
+
+let accessLogStream = rfs.createStream( generator, {
+    interval: '1m',
+    path: path.join(__dirname, '..', 'log')
+  })
+// app.use(logger)
+app.use(morgan('tiny', { stream: accessLogStream }))
 
 console.log(path.join(__dirname, '..', '..'))
 console.log(path.join(__dirname, '..',  'app'))
