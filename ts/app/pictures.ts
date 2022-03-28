@@ -4,7 +4,7 @@ const uploadFile = document.getElementById("file") as HTMLInputElement;
 let formData = new FormData();
 let tokenObject: Token;
 
-setInterval(checkTokenIs, 5000);
+setInterval(checkTokenIs, 8000);
 checkLocalStorage();
 goToNewGalleryPage();
 linksList?.addEventListener("click", createNewAddressOfCurrentPage);

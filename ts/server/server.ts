@@ -15,7 +15,7 @@ interface responseObj {
 }
 
 const token = { token: "token" };
-const PORT = 5000;
+const PORT = 8000;
 const pad = (num: number) => (num > 9 ? "" : "0") + num;
 const app = express();
 
@@ -106,7 +106,7 @@ app.get('/gallery', (req, res) => {
 })
 
 app.use((req, res) => {
-    res.redirect('http://localhost:5000/404.html')
+    res.redirect('http://localhost:8000/404.html')
 })
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
