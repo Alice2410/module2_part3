@@ -1,5 +1,5 @@
-const loginURL = 'http://localhost:5000/index';
-const basicGalleryURL = 'http://localhost:5000/gallery';
+const loginURL = 'http://localhost:8000/index';
+const basicGalleryURL = 'http://localhost:8000/gallery';
 const localStorageTokenKey = 'token';
 const tokenTimestampKey = 'tokenReceiptTime';
 
