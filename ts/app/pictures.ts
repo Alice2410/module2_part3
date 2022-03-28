@@ -66,7 +66,8 @@ async function uploadImage() {
 
         window.location.href = "gallery.html" + searchParam;
     } catch(error) {
-        console.log(error);
+        let err = error as Error;
+        console.log(err.message);
     }
 }
 

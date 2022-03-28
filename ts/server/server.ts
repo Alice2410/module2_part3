@@ -71,10 +71,7 @@ app.post('/gallery', async (req, res) => {
     
     try{
         if(!req.files) {
-            res.send({
-                status: false,
-                message: 'No files uploaded'
-            });
+            throw new Error('Ошибка загрузки. Картинка не сохранена')
         } else {
             
             
@@ -85,7 +82,8 @@ app.post('/gallery', async (req, res) => {
             res.end()
         }
     } catch(err) {
-        res.status(500).send(err);
+        let error = err as Error
+        res.status(500).send(error);
     }
     
 });
