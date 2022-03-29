@@ -1,6 +1,7 @@
 import * as http from "http";
 import * as path from "path";
 import * as fs from "fs";
+import * as config from "./../config"
 import express, {NextFunction, Request, Response} from "express";
 import upload, { UploadedFile } from "express-fileupload";
 import { checkValidUserData } from './check_valid';
@@ -30,12 +31,12 @@ const generator = () => {
 
 let accessLogStream = rfs.createStream( generator, {
     interval: '1h',
-    path: path.join(__dirname, '..', 'log')
+    path: config.LOG_PATH,
 });
 
 app.use(morgan('tiny', { stream: accessLogStream }))
 
-app.use('/', express.static(path.join(__dirname, '..',  'app')), express.static(path.join(__dirname, '..', '..')));
+app.use('/', express.static(config.SCRIPTS_STATIC_PATH), express.static(config.SOURCES_STATIC_PATH));
 
 app.post('/authorization', (req, res) => {
     let body = {
@@ -143,7 +144,7 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
 
     let newFileName = 'user-' + number + '_' +  noSpaceFileName;
 
-    file.mv((path.join(__dirname,'../../resources/images/') + newFileName), (err: Error) => {
+    file.mv((config.IMAGES_PATH + newFileName), (err: Error) => {
     
         if(err){
             res.send (err);
