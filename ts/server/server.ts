@@ -31,25 +31,19 @@ app.use(morgan('tiny', { stream: accessLogStream }))
 
 app.use('/', express.static(config.SCRIPTS_STATIC_PATH), express.static(config.SOURCES_STATIC_PATH));
 
+app.use(express.json());
+
 app.post('/authorization', (req, res) => {
-    let body = {
-        email: '',
-        password: ''
-    };
 
-    req.on('data', (chunk: string) => {
-        body = JSON.parse(chunk);
-     });
+    if (checkValidUserData(req.body)) { //проверка данных пользователя
+        
+        res.statusCode = 200;
+        res.end(JSON.stringify(token));
+    } else {
 
-    req.on('end', () => {
-        if (checkValidUserData(body)) { //проверка данных пользователя
-            res.statusCode = 200;
-            res.end(JSON.stringify(token));
-        } else {
-
-            res.sendStatus(403);
-        }
-    });
+        res.sendStatus(403);
+    }
+    
 })
 
 app.use(upload())
