@@ -15,7 +15,7 @@ tags:
   - name: upload
     description: upload images to gallery page
 paths:
-  /index:
+  /authorization:
     description: Authorization
     post:
       tags:

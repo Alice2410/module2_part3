@@ -37,7 +37,7 @@ app.use(morgan('tiny', { stream: accessLogStream }))
 
 app.use('/', express.static(path.join(__dirname, '..',  'app')), express.static(path.join(__dirname, '..', '..')));
 
-app.post('/index', (req, res) => {
+app.post('/authorization', (req, res) => {
     let body = {
         email: '',
         password: ''

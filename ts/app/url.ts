@@ -1,4 +1,4 @@
-const loginURL = 'http://localhost:8000/index';
+const loginURL = 'http://localhost:8000/authorization';
 const basicGalleryURL = 'http://localhost:8000/gallery';
 const localStorageTokenKey = 'token';
 const tokenTimestampKey = 'tokenReceiptTime';
