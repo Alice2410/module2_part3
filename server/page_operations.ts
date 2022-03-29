@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as url from "url";
-import * as config from "../config"
+import * as config from "./config"
 
 const picOnPage = 4;
 const path = config.IMAGES_PATH;

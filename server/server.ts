@@ -1,7 +1,7 @@
 import * as http from "http";
 import * as path from "path";
 import * as fs from "fs";
-import * as config from "./../config"
+import * as config from "./config"
 import express, {NextFunction, Request, Response} from "express";
 import upload, { UploadedFile } from "express-fileupload";
 import { checkValidUserData } from './check_valid';
@@ -36,7 +36,7 @@ app.use(express.json());
 app.post('/authorization', (req, res) => {
 
     if (checkValidUserData(req.body)) { //проверка данных пользователя
-        
+
         res.statusCode = 200;
         res.end(JSON.stringify(token));
     } else {
@@ -143,17 +143,10 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
 function checkToken (req: Request, res: Response, next: NextFunction) {
     const headers = req.headers;
 
-    if (headers.authorization === 'token' || req.path==='/') {  
+    if (headers.authorization === 'token') {  
         next()
     } else {
         res.sendStatus(403);
         next()
     }
 }
-
-  const getActualRequestDurationInMilliseconds = (start: [number, number]) => {
-    const NS_PER_SEC = 1e9; //  convert to nanoseconds
-    const NS_TO_MS = 1e6; // convert to milliseconds
-    const diff = process.hrtime(start);
-    return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS;
-  };
