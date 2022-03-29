@@ -12,21 +12,14 @@ import * as rfs from "rotating-file-stream";
 
 const token = { token: "token" };
 const PORT = 8000;
-const pad = (num: number) => (num > 9 ? "" : "0") + num;
 const app = express();
 
 const generator = () => {
-
     let time = new Date();
+    let timeZoneOffset = time.getTimezoneOffset() * 60000;
+    let localISOTime = (new Date(Date.now() - timeZoneOffset)).toISOString().slice(0, -5).replace( /[T]/, '_');
 
-    if (!time) return "file.log";
-
-    let month = time.getFullYear() + "_" + pad(time.getMonth() + 1);
-    let day = pad(time.getDate());
-    let hour = pad(time.getHours());
-    let minute = pad(time.getMinutes());
-
-    return `${month + '_'}${day}-${hour + ':'}${minute}-file.log`;
+    return localISOTime;
 };
 
 let accessLogStream = rfs.createStream( generator, {
