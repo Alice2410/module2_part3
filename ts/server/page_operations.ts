@@ -71,4 +71,4 @@ function checkPage(resObj: responseObj) {
     return false;
 }
 
-export {getTotal, getCurrentPage, getRequestedImages, checkPage, getArrayLength};
+export {getTotal, getCurrentPage, getRequestedImages, checkPage, getArrayLength, responseObj};

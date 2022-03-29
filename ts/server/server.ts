@@ -5,14 +5,9 @@ import express, {NextFunction, Request, Response} from "express";
 import upload, { UploadedFile } from "express-fileupload";
 import { checkValidUserData } from './check_valid';
 import * as pageOperations from './page_operations';
+import { responseObj } from "./page_operations";
 import morgan from 'morgan'
 import * as rfs from "rotating-file-stream";
-
-interface responseObj {
-    objects: string[];
-    page: number;
-    total: number;
-}
 
 const token = { token: "token" };
 const PORT = 8000;
