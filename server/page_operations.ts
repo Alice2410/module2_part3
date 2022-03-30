@@ -1,9 +1,9 @@
 import * as fs from "fs";
 import * as url from "url";
-import * as pathMod from "path";
+import * as config from "./config"
 
 const picOnPage = 4;
-const path = pathMod.join(__dirname,'../../resources/images')
+const path = config.IMAGES_PATH;
 
 interface responseObj {
     objects: string[];
@@ -71,4 +71,4 @@ function checkPage(resObj: responseObj) {
     return false;
 }
 
-export {getTotal, getCurrentPage, getRequestedImages, checkPage, getArrayLength};
+export {getTotal, getCurrentPage, getRequestedImages, checkPage, getArrayLength, responseObj};
