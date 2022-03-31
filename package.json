@@ -1,12 +1,13 @@
 {
   "scripts": {
     "start": "npm run build && node ./build/server/server.js",
-    "build": "npm run build:back && npm run build:front && npm run rm && mkdir ./build && npm run move && npm run copySrc && npm run modules",
+    "build": "npm run build:back && npm run build:front && npm run copyBuild && npm run rm && mkdir ./build && npm run copyAllBuild && npm run copySrc && npm run modules",
     "build:back": "cd ./server && npm run build",
     "build:front": "cd ./app && npm run build",
+    "copyBuild":"cp -R ./app/build ./build && cp -R ./app/build/ ./build/app",
     "modules": "cp -R ./server/node_modules ./build/node_modules",
     "rm": "rm -R ./build",
-    "move": "mv ./server/server ./build && mv ./app/app ./build",
+    "copyAllBuild": "cp -R ./server/build/ ./build/server && cp -R ./app/build/ ./build/app",
     "copySrc": "cp -R ./src ./build && mv ./build/src/* ./build && rmdir ./build/src"
   }
 }
