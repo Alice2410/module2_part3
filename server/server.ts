@@ -94,13 +94,11 @@ app.use((req, res) => {
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-function handleFalsePageError (resObj: responseObj, res: http.ServerResponse) {
+function sendNotFoundStatus (resObj: responseObj, res: http.ServerResponse) {
 
     if (!pageOperations.checkPage(resObj)) {
         res.statusCode = 404;
         res.end();
-
-        throw new Error ('Такой страницы не существует')
     } 
 
     return resObj;
@@ -112,7 +110,7 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
     pageOperations.getCurrentPage(resObj, reqUrl);
 
     try {
-        handleFalsePageError(resObj, res);
+        sendNotFoundStatus(resObj, res);
     } catch (err) {
         return err;
     }
