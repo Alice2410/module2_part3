@@ -15,11 +15,9 @@ const PORT = 8000;
 const app = express();
 
 const generator = () => {
-    let time = new Date();
-    let timeZoneOffset = time.getTimezoneOffset() * 60000;
-    let localISOTime = (new Date(Date.now() - timeZoneOffset)).toISOString().slice(0, -5).replace( /[T]/, '_');
+    let ISOTime = (new Date(Date.now())).toISOString().slice(0, -5).replace( /[T]/, '_');
 
-    return localISOTime;
+    return ISOTime;
 };
 
 let accessLogStream = rfs.createStream( generator, {
