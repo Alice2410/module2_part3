@@ -8,6 +8,6 @@
     "modules": "cp -R ./server/node_modules ./build/node_modules",
     "rm": "rm -R ./build",
     "copyAllBuild": "cp -R ./server/build/ ./build/server && cp -R ./app/build/ ./build/app",
-    "copySrc": "cp -R ./src ./build && mv ./build/src/* ./build && rmdir ./build/src"
+    "copySrc": "cp -R ./src ./build/pages"
   }
 }
