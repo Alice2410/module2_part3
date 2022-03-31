@@ -18,5 +18,5 @@ In this project, a server was implemented that processes requests from the clien
 To use this app you need to:
 1. Download project folder
 2. Run 'npm start' in terminal
-3. Open localhost:8000/ in browser
+3. Open localhost:5000/ in browser
 4. Log in with valid email and password
