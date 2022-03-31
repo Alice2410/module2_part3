@@ -11,7 +11,7 @@ import morgan from 'morgan'
 import * as rfs from "rotating-file-stream";
 
 const token = { token: "token" };
-const PORT = 8000;
+const PORT = 5000;
 const app = express();
 
 const generator = () => {
@@ -66,7 +66,7 @@ app.post('/gallery', async (req, res) => {
     
 });
 
-app.get('/gallery', (req, res) => {
+app.get('/gallery', async (req, res) => {
                
         const reqUrl = req.url;
         const resObj = {
@@ -76,7 +76,7 @@ app.get('/gallery', (req, res) => {
         }
 
         try {
-            sendResponse(resObj, reqUrl, res);
+            await sendResponse(resObj, reqUrl, res);
         } catch (error) {
             console.log(error);
         }
@@ -84,7 +84,7 @@ app.get('/gallery', (req, res) => {
 })
 
 app.use((req, res) => {
-    res.redirect('http://localhost:8000/404.html')
+    res.redirect('http://localhost:5000/404.html')
 })
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
@@ -94,6 +94,7 @@ function sendNotFoundStatus (resObj: responseObj, res: http.ServerResponse) {
     if (!pageOperations.checkPage(resObj)) {
         res.statusCode = 404;
         res.end();
+        return false;
     } 
 
     return resObj;
@@ -105,15 +106,14 @@ async function sendResponse (resObj: responseObj, reqUrl: string, res: http.Serv
     pageOperations.getCurrentPage(resObj, reqUrl);
 
     try {
-        sendNotFoundStatus(resObj, res);
+        if (sendNotFoundStatus(resObj, res)) {
+            await pageOperations.getRequestedImages(resObj);
+            res.statusCode = 200;
+            res.end(JSON.stringify(resObj));
+        }
     } catch (err) {
         return err;
     }
-    
-    await pageOperations.getRequestedImages(resObj);
-    res.statusCode = 200;
-    res.end(JSON.stringify(resObj));
-
 }
 
 async function getUploadedFileName(file: UploadedFile, res: Response) {
@@ -128,8 +128,9 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
     
         if(err){
             res.send (err);
-        } 
-        res.end() 
+        } else {
+            res.end() 
+        }
     })
 }
 
