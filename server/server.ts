@@ -57,12 +57,9 @@ app.post('/gallery', async (req, res) => {
             throw new Error('Ошибка загрузки. Картинка не сохранена')
         } else {
             
-            
             let file = req.files.file as UploadedFile;
 
             getUploadedFileName(file, res)
-            
-            res.end()
         }
     } catch(err) {
         let error = err as Error
@@ -133,8 +130,8 @@ async function getUploadedFileName(file: UploadedFile, res: Response) {
     
         if(err){
             res.send (err);
-            res.end()
-        }  
+        } 
+        res.end() 
     })
 }
 
