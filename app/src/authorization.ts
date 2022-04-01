@@ -1,3 +1,4 @@
+import {Error, loginURL, Token, localStorageTokenKey, tokenTimestampKey} from './url.js'
 const authorizationForm = document.getElementById('authorization-form');
 const userEmail = <HTMLInputElement>document.getElementById('email');
 const userPassword = <HTMLInputElement>document.getElementById('password');

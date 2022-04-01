@@ -1,3 +1,4 @@
+import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKey } from "./url.js";
 const linksList = document.getElementById('links');
 const uploadImageForm = document.getElementById('upload') as HTMLFormElement;
 const uploadFile = document.getElementById("file") as HTMLInputElement;
