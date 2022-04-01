@@ -1,3 +1,4 @@
+import {Error, loginURL, Token, localStorageTokenKey, tokenTimestampKey} from './url.js'
 const authorizationForm = document.getElementById('authorization-form');
 const userEmail = <HTMLInputElement>document.getElementById('email');
 const userPassword = <HTMLInputElement>document.getElementById('password');
@@ -42,7 +43,7 @@ async function loginWithToken() {
 }
 
 function redirect() {
-    const currentPage = window.location; //currentPage: http://localhost:8000/ || http://localhost:8000/index.html?page=2
+    const currentPage = window.location; //currentPage: http://localhost:5000/ || http://localhost:5000/index.html?page=2
     const pageNumber = currentPage.search; //?page=2
 
     authorizationForm?.removeEventListener("submit", startAuthorization);
